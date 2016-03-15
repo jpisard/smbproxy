@@ -85,7 +85,12 @@ to apply the configuration, and the system should be operational.
 
 ### Checking
 
-From a machine in datacenter 2, try to connect to \\<entrypoint_ip>. You should see the same shares and the same files as present in the original fileserver
+From a machine in datacenter 2, try to connect to \\\\*entrypoint_ip*. You should see the same shares and the same files as present in the original fileserver.
+
+It is important to note that until you actually try to open them, the files aren't transferred towards datacenter 2. They only appear to be present.
+When you try to open a file, you will notice that, the first time, the file transfer can appear to be frozen. This is a sign that the file is being to copied from the real fileserver to the entrypoint.
+Once the transfer is done, the file will open as usual, and if you access the file again, it will be served directly from the cache. If the file is modified in datacenter 1, the cache will detect it and re-import the file.
+If the file is modified in datacenter 2, the changes will be transmitted back to the real fileserver.
 
 
 Documentation
@@ -106,3 +111,5 @@ For a commercial license, [contact us](mailto:fruty@seekscale.com).
 Support
 =======
 Commercial support is available, please [contact us](mailto:fruty@seekscale.com) for more information.
+
+
