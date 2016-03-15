@@ -91,7 +91,7 @@ From a machine in datacenter 2, try to connect to \\<entrypoint_ip>. You should 
 Documentation
 =============
 
-[SmbproxyCodeOverview.pdf](https://github.com/Seekscale/smbproxy/blob/master/SmbproxyCodeOverview.pdf) presents a lot of further context on the way smbproxy is designed to be used and on the code internals
+[SmbproxyCodeOverview.pdf](https://github.com/Seekscale/smbproxy/blob/master/doc/SmbproxyCodeOverview.pdf) presents a lot of further context on the way smbproxy is designed to be used and on the code internals
 
 
 Licensing
