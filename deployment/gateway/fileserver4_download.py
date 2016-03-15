@@ -9,7 +9,7 @@ import redis
 from twisted.internet import defer
 from twisted.internet import reactor
 
-from renderfarm_commons.cache_client.filecache_client3 import CacheClient3
+from seekscale_commons.cache_client.filecache_client3 import CacheClient3
 
 from fileserver4_path_helpers import translate_path
 import settings

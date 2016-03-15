@@ -18,9 +18,9 @@ import redis
 from twisted.internet import defer
 from twisted.internet.error import ReactorNotRunning
 
-import luna_commons
-
 from twisted_client import create_agent, upload, download_with_tmp_files, reactor
+
+from ..base import create_dir, download
 
 
 class CacheClient3(object):
@@ -72,9 +72,9 @@ class CacheClient3(object):
         self.log = logging.getLogger(__name__)
 
     def get_certs(self):
-        luna_commons.create_dir(self.client_certs_dir)
+        create_dir(self.client_certs_dir)
         if not os.path.exists(self.cacheclient_cert):
-            r = luna_commons.download(
+            r = download(
                 'http://10.91.0.1:16000/client.crt',
                 self.cacheclient_cert,
                 timeout=10,
@@ -83,7 +83,7 @@ class CacheClient3(object):
                 raise RuntimeError(u'Unable to fetch client.crt. Cannot initialize CacheClient.')
 
         if not os.path.exists(self.cacheclient_key):
-            r = luna_commons.download(
+            r = download(
                 'http://10.91.0.1:16000/client.key',
                 self.cacheclient_key,
                 timeout=10,
@@ -92,7 +92,7 @@ class CacheClient3(object):
                 raise RuntimeError(u'Unable to fetch client.key. Cannot initialize CacheClient.')
 
         if not os.path.exists(self.cacheclient_ca):
-            r = luna_commons.download(
+            r = download(
                 'http://10.91.0.1:16000/ca.crt',
                 self.cacheclient_ca,
                 timeout=10,
@@ -202,7 +202,7 @@ class CacheClient3(object):
         target_path = os.path.abspath(target_path)
 
         # Make sure the directory we download to exists
-        luna_commons.create_dir(os.path.dirname(target_path))
+        create_dir(os.path.dirname(target_path))
 
         if overwrite is False and os.path.exists(target_path):
             return
@@ -237,7 +237,7 @@ def configure_parser(root_parser):
         help='Interact with the file cache',
         description='Interact with the file cache',
     )
-    renderfarm_commons.cache_client.filecache_client.configure_parser(cacheclient_parser)
+    seekscale_commons.cache_client.filecache_client.configure_parser(cacheclient_parser)
     """
 
 

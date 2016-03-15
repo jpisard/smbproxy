@@ -41,8 +41,7 @@ MAX_WORKERS = 4
 
 logger = logging.getLogger(__name__)
 
-import luna_commons
-
+from seekscale_commons.base import create_dir
 
 def json_response(obj):
     obj['status'] = 'Ok'
@@ -303,7 +302,7 @@ class TouchFile(tornado.web.RequestHandler):
 
         dirname = os.path.dirname(path)
         if not os.path.exists(dirname):
-            luna_commons.create_dir(dirname)
+            create_dir(dirname)
 
         if not os.path.exists(path):
             with open(path, 'wb') as _:
@@ -372,7 +371,7 @@ class PutFileHandler(tornado.web.RequestHandler):
 
         dirname = os.path.dirname(path)
         if not os.path.exists(dirname):
-            luna_commons.create_dir(dirname)
+            create_dir(dirname)
 
         f = self.request.files.get('file')
 

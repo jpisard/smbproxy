@@ -20,7 +20,7 @@ from twisted.internet import defer, reactor
 from twisted.python import failure
 import treq
 
-from renderfarm_commons.cache_client import filecache_client3
+from seekscale_commons.cache_client import filecache_client3
 
 import logger
 from statsd_logging import StatsdClient

@@ -12,7 +12,7 @@ default_log_config = {
 
     "formatters": {
         "json": {
-            "()": "luna_commons.jsonlogger.Formatter",
+            "()": "seekscale_commons.jsonlogger.Formatter",
         },
     },
 

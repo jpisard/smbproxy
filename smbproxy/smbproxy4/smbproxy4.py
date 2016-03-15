@@ -19,7 +19,7 @@ from twisted.internet.task import LoopingCall
 from twisted.protocols.basic import LineReceiver
 from twisted.python import log
 
-from renderfarm_commons.stream_stats import StreamStatsClient
+from seekscale_commons.stream_stats import StreamStatsClient
 
 from nmb.nmb_constants import *
 from nmb.nmb_structs import DirectTCPSessionMessage, NMBError, NotConnectedError

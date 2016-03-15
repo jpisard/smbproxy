@@ -16,12 +16,14 @@ import base64
 import os
 import redis
 import logging
-import luna_commons
 import random
 import time
 from threading import Thread
 from nose.plugins.attrib import attr
 import filecache_client3
+
+from ..base import create_dir, random_num_string, sha256sum, setup_logging
+
 BLANK_FILE = '/tmp/blank'
 
 BASE_TESTS_DIR = '/tmp/CacheClientTest'
@@ -31,7 +33,7 @@ BASE_TESTS_DIR = '/tmp/CacheClientTest'
 class CacheClientTest(unittest.TestCase):
 
     def setUp(self):
-        luna_commons.create_dir(BASE_TESTS_DIR)
+        create_dir(BASE_TESTS_DIR)
         self.cacheclient = filecache_client3.CacheClient3()
         self.cacheclient.BLANK_FILE = BLANK_FILE
 
@@ -53,8 +55,8 @@ class CacheClientTest(unittest.TestCase):
             for i in range(600):
                 fh.write(str(random.randint(0, 9999)))
 
-        self.retrieved_file = os.path.join(BASE_TESTS_DIR, luna_commons.random_num_string(15))
-        self.retrieved_file2 = os.path.join(BASE_TESTS_DIR, luna_commons.random_num_string(12))
+        self.retrieved_file = os.path.join(BASE_TESTS_DIR, random_num_string(15))
+        self.retrieved_file2 = os.path.join(BASE_TESTS_DIR, random_num_string(12))
 
     def tearDown(self):
         try:
@@ -89,7 +91,7 @@ class CacheClientTest(unittest.TestCase):
 
     def test_add_file(self):
         some_key = self.cacheclient.key_from_file(self.existing_file_path)
-        sha = luna_commons.sha256sum(self.existing_file_path)
+        sha = sha256sum(self.existing_file_path)
 
         self.cacheclient.add_file(some_key, self.existing_file_path)
 
@@ -102,14 +104,14 @@ class CacheClientTest(unittest.TestCase):
             os.path.getsize(self.existing_file_path)
         )
         self.assertEquals(
-            luna_commons.sha256sum(self.retrieved_file),
+            sha256sum(self.retrieved_file),
             sha
         )
 
     def test_add_nonexistent_file(self):
         path = os.path.join(BASE_TESTS_DIR, 'nonexistent')
         some_key = self.cacheclient.key_from_file(BLANK_FILE)
-        sha = luna_commons.sha256sum(BLANK_FILE)
+        sha = sha256sum(BLANK_FILE)
 
         self.cacheclient.add_file(some_key, path)
 
@@ -131,12 +133,12 @@ class CacheClientTest(unittest.TestCase):
             os.path.getsize(self.retrieved_file) > 0
         )
         self.assertEquals(
-            luna_commons.sha256sum(self.retrieved_file),
-            luna_commons.sha256sum(self.existing_file_path)
+            sha256sum(self.retrieved_file),
+            sha256sum(self.existing_file_path)
         )
         self.assertEquals(
             r['sha256'],
-            luna_commons.sha256sum(self.existing_file_path)
+            sha256sum(self.existing_file_path)
         )
 
     def test_cache_file_with_unicode_name(self):
@@ -147,12 +149,12 @@ class CacheClientTest(unittest.TestCase):
             os.path.getsize(self.retrieved_file) > 0
         )
         self.assertEqual(
-            luna_commons.sha256sum(self.retrieved_file),
-            luna_commons.sha256sum(self.existing_file_path3)
+            sha256sum(self.retrieved_file),
+            sha256sum(self.existing_file_path3)
         )
         self.assertEqual(
             r['sha256'],
-            luna_commons.sha256sum(self.existing_file_path3),
+            sha256sum(self.existing_file_path3),
         )
 
     def test_multiple_cache_file(self):
@@ -171,21 +173,21 @@ class CacheClientTest(unittest.TestCase):
         )
 
         self.assertEqual(
-            luna_commons.sha256sum(self.retrieved_file),
-            luna_commons.sha256sum(self.existing_file_path)
+            sha256sum(self.retrieved_file),
+            sha256sum(self.existing_file_path)
         )
         self.assertEqual(
-            luna_commons.sha256sum(self.retrieved_file2),
-            luna_commons.sha256sum(self.existing_file_path2)
+            sha256sum(self.retrieved_file2),
+            sha256sum(self.existing_file_path2)
         )
 
         self.assertEqual(
             r1['sha256'],
-            luna_commons.sha256sum(self.existing_file_path)
+            sha256sum(self.existing_file_path)
         )
         self.assertEqual(
             r2['sha256'],
-            luna_commons.sha256sum(self.existing_file_path2)
+            sha256sum(self.existing_file_path2)
         )
 
     # FIXME: How do we test this with Swift ?
@@ -212,8 +214,8 @@ class CacheClientTest(unittest.TestCase):
     #     shutil.copyfile(self.existing_file_path, copied_file)
     #     # This is just a security, not a real test
     #     self.assertEquals(
-    #         luna_commons.sha256sum(self.existing_file_path),
-    #         luna_commons.sha256sum(copied_file)
+    #         sha256sum(self.existing_file_path),
+    #         sha256sum(copied_file)
     #     )
     #
     #     r1 = self.cacheclient.cache_file(self.existing_file_path)
@@ -233,7 +235,7 @@ class CacheClientTest(unittest.TestCase):
         """Tests that if a file changes, the cache is invalidated"""
         r1 = self.cacheclient.cache_file(self.existing_file_path)
 #        stored_path1 = os.path.join(FTP_ROOT, r1['sha256'])
-        sha1 = luna_commons.sha256sum(self.existing_file_path)
+        sha1 = sha256sum(self.existing_file_path)
 
         self.cacheclient.get_file(r1['sha256'], self.retrieved_file)
 
@@ -243,11 +245,11 @@ class CacheClientTest(unittest.TestCase):
         r2 = self.cacheclient.cache_file(self.existing_file_path)
         self.assertNotEqual(r1['sha256'], r2['sha256'])
 
-        sha2 = luna_commons.sha256sum(self.existing_file_path)
+        sha2 = sha256sum(self.existing_file_path)
         self.cacheclient.get_file(r2['sha256'], self.retrieved_file2)
 
         self.assertEquals(
-            luna_commons.sha256sum(self.retrieved_file),
+            sha256sum(self.retrieved_file),
             sha1
         )
         self.assertEquals(
@@ -256,7 +258,7 @@ class CacheClientTest(unittest.TestCase):
         )
 
         self.assertEquals(
-            luna_commons.sha256sum(self.retrieved_file2),
+            sha256sum(self.retrieved_file2),
             sha2
         )
         self.assertEquals(
@@ -268,7 +270,7 @@ class CacheClientTest(unittest.TestCase):
         """Tests that if a file changes and size doesn't change, the cache is invalidated"""
         r1 = self.cacheclient.cache_file(self.existing_file_path)
         self.cacheclient.get_file(r1['sha256'], self.retrieved_file)
-        sha1 = luna_commons.sha256sum(self.existing_file_path)
+        sha1 = sha256sum(self.existing_file_path)
 
         # Wait a bit. We don't ask the system to detect changes occuring in the same second
         time.sleep(5)
@@ -287,10 +289,10 @@ class CacheClientTest(unittest.TestCase):
         self.assertNotEqual(r1['sha256'], r2['sha256'])
 
         self.cacheclient.get_file(r2['sha256'], self.retrieved_file2)
-        sha2 = luna_commons.sha256sum(self.existing_file_path)
+        sha2 = sha256sum(self.existing_file_path)
 
         self.assertEquals(
-            luna_commons.sha256sum(self.retrieved_file),
+            sha256sum(self.retrieved_file),
             sha1
         )
         self.assertEquals(
@@ -299,7 +301,7 @@ class CacheClientTest(unittest.TestCase):
         )
 
         self.assertEquals(
-            luna_commons.sha256sum(self.retrieved_file2),
+            sha256sum(self.retrieved_file2),
             sha2
         )
         self.assertEquals(
@@ -313,7 +315,7 @@ class CacheClientTest(unittest.TestCase):
         # Interestingly, the system seems to hold fine even with a high number of threads.
         # There is probably a bottleneck somewhere else
         concurrency = 50
-        sha = luna_commons.sha256sum(self.existing_file_path)
+        sha = sha256sum(self.existing_file_path)
 
         def send_file():
             self.cacheclient.cache_file(self.existing_file_path)
@@ -330,7 +332,7 @@ class CacheClientTest(unittest.TestCase):
         self.cacheclient.get_file(sha, self.retrieved_file)
 
         self.assertEqual(
-            luna_commons.sha256sum(self.retrieved_file),
+            sha256sum(self.retrieved_file),
             sha
         )
 
@@ -339,7 +341,7 @@ class CacheClientTest(unittest.TestCase):
         the same file at the same time"""
         # Fails at concurrency level 50, maybe below.
         concurrency = 50
-        sha = luna_commons.sha256sum(self.existing_file_path)
+        sha = sha256sum(self.existing_file_path)
 
         threads = []
         source_files = []
@@ -362,7 +364,7 @@ class CacheClientTest(unittest.TestCase):
         self.cacheclient.get_file(sha, self.retrieved_file)
 
         self.assertEqual(
-            luna_commons.sha256sum(self.retrieved_file),
+            sha256sum(self.retrieved_file),
             sha
         )
 
@@ -376,8 +378,8 @@ class CacheClientTest(unittest.TestCase):
         self.cacheclient.get_file(sha, target_path)
 
         self.assertEquals(
-            luna_commons.sha256sum(target_path),
-            luna_commons.sha256sum(self.existing_file_path)
+            sha256sum(target_path),
+            sha256sum(self.existing_file_path)
         )
 
     def test_get_file_in_nonexisting_directory(self):
@@ -390,8 +392,8 @@ class CacheClientTest(unittest.TestCase):
         self.cacheclient.get_file(sha, target_path)
 
         self.assertEqual(
-            luna_commons.sha256sum(target_path),
-            luna_commons.sha256sum(self.existing_file_path)
+            sha256sum(target_path),
+            sha256sum(self.existing_file_path)
         )
 
     def test_get_file_to_unicode_path(self):
@@ -404,8 +406,8 @@ class CacheClientTest(unittest.TestCase):
         self.cacheclient.get_file(sha, target_path)
 
         self.assertEquals(
-            luna_commons.sha256sum(target_path),
-            luna_commons.sha256sum(self.existing_file_path)
+            sha256sum(target_path),
+            sha256sum(self.existing_file_path)
         )
 
     def test_multiple_get_file(self):
@@ -421,13 +423,13 @@ class CacheClientTest(unittest.TestCase):
         self.cacheclient.get_file(sha2, target_path2)
 
         self.assertEquals(
-            luna_commons.sha256sum(target_path1),
-            luna_commons.sha256sum(self.existing_file_path)
+            sha256sum(target_path1),
+            sha256sum(self.existing_file_path)
         )
 
         self.assertEquals(
-            luna_commons.sha256sum(target_path2),
-            luna_commons.sha256sum(self.existing_file_path2)
+            sha256sum(target_path2),
+            sha256sum(self.existing_file_path2)
         )
 
     def test_simultaneous_get_file(self):
@@ -457,11 +459,11 @@ class CacheClientTest(unittest.TestCase):
 
         for p in target_paths:
             self.assertEquals(
-                luna_commons.sha256sum(p),
+                sha256sum(p),
                 target_sha
             )
 
 
 if __name__ == '__main__':
-    luna_commons.setup_logging(level=logging.FATAL)
+    setup_logging(level=logging.FATAL)
     unittest.main()

@@ -17,8 +17,7 @@ mkdir -p /usr/local/share/seekscale/smbproxy
 virtualenv /usr/local/share/seekscale/smbproxy/venv
 source /usr/local/share/seekscale/smbproxy/venv/bin/activate
 pip install twisted requests pyasn1 redis treq structlog pyyaml psycopg2 statsd tornado
-pip install ../common/luna_commons-0.0.1.tar.gz
-pip install ../common/renderfarm_commons-0.0.1.tar.gz
+pip install ../../seekscale_commons/
 deactivate
 
 # Install raw_nginx_cache
@@ -26,7 +25,7 @@ mkdir -p /usr/local/share/seekscale/raw_nginx_cache
 virtualenv /usr/local/share/seekscale/raw_nginx_cache/venv
 source /usr/local/share/seekscale/raw_nginx_cache/venv/bin/activate
 pip install tornado flask
-pip install ../common/luna_commons-0.0.1.tar.gz
+pip install ../../seekscale_commons/
 deactivate
 cp -f raw_nginx_cache/app.py /usr/local/share/seekscale/raw_nginx_cache/
 

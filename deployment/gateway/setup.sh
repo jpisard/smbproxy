@@ -20,8 +20,7 @@ cp -f *.py /usr/local/share/seekscale/
 virtualenv /usr/local/share/seekscale/venv
 source /usr/local/share/seekscale/venv/bin/activate
 pip install tornado twisted pyyaml redis psutil requests futures poster jinja2 ujson pyOpenSSL ndg-httpsclient pyasn1
-pip install ../common/luna_commons-0.0.1.tar.gz
-pip install ../common/renderfarm_commons-0.0.1.tar.gz
+pip install ../../seekscale_commons/
 
 # Configure dependencies
 cp -f seekscale-gateway.nginx.conf /etc/nginx/conf.d

@@ -3,10 +3,11 @@
 # Copyright Luna Technology 2014
 # Matthieu Riviere <mriviere@luna-technology.com>
 
-import luna_commons
 import logging
 import posixpath
 import ntpath
+
+from seekscale_commons.base import create_dir, exec_command, setup_logging
 
 #from api_client import GatewayAPIClient
 import settings
@@ -84,7 +85,7 @@ class MountPoint(object):
             return
 
         # Create the mountpoint
-        luna_commons.create_dir(self.mountpoint)
+        create_dir(self.mountpoint)
 
         # Do the mount
         cmd = [
@@ -95,7 +96,7 @@ class MountPoint(object):
             'credentials=%s' % (settings.SMB_CREDENTIALS_FILE,)
         ]
 
-        retcode, out, err = luna_commons.exec_command(cmd)
+        retcode, out, err = exec_command(cmd)
 
         if retcode == 0:
             logging.info('Successfully mounted %s as %s' % (
@@ -123,7 +124,7 @@ class MountPoint(object):
             self.mountpoint
         ]
 
-        retcode, out, err = luna_commons.exec_command(cmd)
+        retcode, out, err = exec_command(cmd)
 
         if retcode == 0:
             logging.info('Successfully unmounted %s from %s' % (
@@ -178,7 +179,7 @@ class MountPoint(object):
 #     linux_formatted_unc = linux_formatted_unc_path(unc)
 #
 #     mountpoint = mountpoint_from_unc(unc)
-#     luna_commons.create_dir(mountpoint)
+#     create_dir(mountpoint)
 #
 #     # Do the mount
 #     cmd = [
@@ -189,7 +190,7 @@ class MountPoint(object):
 #         'credentials=%s' % (settings.SMB_CREDENTIALS_FILE,)
 #     ]
 #
-#     retcode, out, err = luna_commons.exec_command(cmd)
+#     retcode, out, err = exec_command(cmd)
 #
 #     if retcode == 0:
 #         logging.info('Successfully mounted %s as %s' % (
@@ -222,7 +223,7 @@ class MountPoint(object):
 #         mountpoint
 #     ]
 #
-#     retcode, out, err = luna_commons.exec_command(cmd)
+#     retcode, out, err = exec_command(cmd)
 #
 #     if retcode == 0:
 #         logging.info('Successfully unmounted %s from %s' % (
@@ -268,7 +269,7 @@ class MountPoint(object):
 
 
 def test():
-    luna_commons.setup_logging(level=logging.INFO)
+    setup_logging(level=logging.INFO)
     p = '\\\\seekscale.local\\Q'
 
     mount = MountPoint(p)
@@ -277,7 +278,7 @@ def test():
 
 
 def mount_all_drives_api():
-    luna_commons.setup_logging(level=logging.INFO)
+    setup_logging(level=logging.INFO)
 
     api_client = GatewayAPIClient()
 

@@ -36,8 +36,8 @@ MAX_WORKERS = 4
 
 logger = logging.getLogger(__name__)
 
-from luna_commons.flask_utils import json_response, json_error
-from renderfarm_commons.cache_client.filecache_client3 import CacheClient3
+from seekscale_commons.flask_utils import json_response, json_error
+from seekscale_commons.cache_client.filecache_client3 import CacheClient3
 
 
 def tornado_json_endpoint(func):

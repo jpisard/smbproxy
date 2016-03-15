@@ -12,8 +12,8 @@ from tornado.ioloop import IOLoop
 from tornado.options import parse_command_line
 from tornado.wsgi import WSGIContainer
 
-from luna_commons.flask_utils import json_endpoint
-from luna_commons import sha256sum, create_dir
+from seekscale_commons.flask_utils import json_endpoint
+from seekscale_commons.base import sha256sum, create_dir
 
 
 logger = logging.getLogger(__name__)
