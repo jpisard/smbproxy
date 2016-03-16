@@ -72,6 +72,7 @@ elif not os.path.exists(ssl_ca):
 # The remote host (= entrypoint ip)
 #
 remote_host = settings.get('remote_host', '10.91.0.1')
+remote_redis_host = settings.get('remote_redis_host', '127.0.0.1')
 
 
 #

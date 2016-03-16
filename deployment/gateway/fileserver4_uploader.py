@@ -138,7 +138,7 @@ if __name__ == "__main__":
     logger.info(u"Filesystem encoding: %s" % sys.getfilesystemencoding())
 
     application = tornado_app(
-        settings.remote_host,
+        settings.remote_redis_host,
         settings.ssl_cert,
         settings.ssl_key,
         settings.ssl_ca

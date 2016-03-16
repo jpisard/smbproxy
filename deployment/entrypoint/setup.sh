@@ -4,7 +4,7 @@ set -ex
 
 # Install dependencies
 apt-get update -y -qq
-apt-get install -y -qq libffi-dev libssl-dev cifs-utils nginx redis-server supervisor libpq-dev python-dev python-virtualenv
+apt-get install -y -qq wget stunnel4 libffi-dev libssl-dev cifs-utils nginx redis-server supervisor libpq-dev python-dev python-virtualenv
 
 # Create directorie hierarchy
 mkdir -p /etc/seekscale
@@ -40,6 +40,8 @@ cp -f supervisord.conf /etc/seekscale
 cp -f redis.conf /etc/redis/redis.conf
 service redis-server restart
 
+# Setup stunnel
+cp -f stunnel.conf /etc/seekscale
 
 # Setup samba
 useradd -m cluster_user

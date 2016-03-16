@@ -24,7 +24,7 @@ logger = logging.getLogger(__name__)
 
 
 def setup_background_workers():
-    redis_host = settings.remote_host
+    redis_host = settings.remote_redis_host
     bg_dl_worker = BackgroundDownloadWorker(redis_host)
     bg_dl_worker.run_worker()
 

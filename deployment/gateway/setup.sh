@@ -4,7 +4,7 @@ set -ex
 
 # Install dependencies
 apt-get update -y -qq
-apt-get install -y -qq libffi-dev libssl-dev cifs-utils nginx redis-server supervisor libpq-dev python-dev python-virtualenv
+apt-get install -y -qq stunnel4 libffi-dev libssl-dev cifs-utils nginx redis-server supervisor libpq-dev python-dev python-virtualenv
 
 # Create directory hierarchy
 mkdir -p /etc/seekscale
@@ -26,6 +26,9 @@ pip install ../../seekscale_commons/
 cp -f seekscale-gateway.nginx.conf /etc/nginx/conf.d
 cp -f ../common/ssl-conf /etc/nginx
 cp -f supervisord.conf /etc/seekscale
+
+# Setup stunnel
+cp -f stunnel.conf /etc/seekscale
 
 # Setup /etc/hosts
 echo "127.0.0.1 gateway.seekscale.com" >> /etc/hosts
