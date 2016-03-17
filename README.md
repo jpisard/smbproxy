@@ -105,7 +105,7 @@ Smbproxy is licensed under the GNU GPLv2 or later. See [LICENSE](https://github.
 
 Smbproxy contains modified code from [pysmb](https://github.com/miketeo/pysmb), used in accord with its [license](https://github.com/miketeo/pysmb/blob/master/LICENSE).
 
-For a commercial license, [contact us](mailto:fruty@seekscale.com).
+For a commercial license, if you want to embed smbproxy in a commercial product, [contact us](mailto:fruty@seekscale.com).
 
 
 Support
