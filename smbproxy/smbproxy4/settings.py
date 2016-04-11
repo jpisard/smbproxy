@@ -81,6 +81,7 @@ SHARES_ROOT = settings.get('shares_root', '/home/data/smbshares/')
 REMOTE_SAMBA_HOST = settings.get('remote_samba_host', '127.0.0.1')
 REMOTE_SAMBA_PORT = int(settings.get('remote_samba_port', 1445))
 
+FORCE_HOST = settings.get('force_host', None)
 
 cache_host = settings.get('cache_host', '127.0.0.1')
 ssl_cert = settings.get('ssl_cert', None)

@@ -17,7 +17,7 @@ from tornado.options import define, options, parse_command_line
 import tornado.web
 
 
-from metadata_loader import (
+from metadata_proxy.metadata_loader import (
     get_cached_list_dir,
     set_cached_list_dir,
     get_cached_file_metadata,

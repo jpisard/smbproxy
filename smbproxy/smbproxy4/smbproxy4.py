@@ -1005,9 +1005,11 @@ class ProxyServerProtocol(protocol.Protocol):
                 return None
             else:
                 # HOTFIX
-                split_request_share = request_share.split('\\')
-                split_request_share[2] = "WIN-9LHJ7FU43T7"
-                request_share = "\\".join(split_request_share)
+                if self.settings.FORCE_HOST is not None:
+                    split_request_share = request_share.split('\\')
+                    #split_request_share[2] = "WIN-9LHJ7FU43T7"
+                    split_request_share[2] = self.settings.FORCE_HOST
+                    request_share = "\\".join(split_request_share)
 
                 return request_share
 

@@ -80,7 +80,13 @@ When you are done, run
 seekscale-reconfigure
 ```
 
-to apply the configuration, and the system should be operational.
+to apply the configuration, and the system should be operational. To verify it, run
+
+```
+seekscale-check
+```
+
+Everything should appear as "RUNNING".
 
 
 ### Checking

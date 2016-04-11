@@ -1,0 +1,7 @@
+ssl_cert: /etc/seekscale/certs/gateway.crt
+ssl_key: /etc/seekscale/certs/gateway.key
+ssl_ca: /etc/seekscale/certs/ca.crt
+# remote_host: <IP_OF_THE_ENTRYPOINT>
+# smb_username: <CHANGEME>
+# smb_password: <CHANGEME>
+# shares: ['\\54.145.111.219\z', '\\FILESERVER\\SHARE']

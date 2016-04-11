@@ -2,9 +2,16 @@
 
 set -ex
 
+# Check for pre-existing installation
+if [ -d /usr/local/share/seekscale ]; then
+    echo "Found existing installation. Removing it"
+    rm -rf /usr/local/share/seekscale
+fi
+
+
 # Install dependencies
 apt-get update -y -qq
-apt-get install -y -qq stunnel4 libffi-dev libssl-dev cifs-utils nginx redis-server supervisor libpq-dev python-dev python-virtualenv
+apt-get install -y -qq stunnel4 libffi-dev libssl-dev cifs-utils nginx supervisor libpq-dev python-dev python-virtualenv
 
 # Create directory hierarchy
 mkdir -p /etc/seekscale
@@ -15,12 +22,15 @@ mkdir -p /mnt/seekscale_mounts
 
 # Install files
 cp -f *.py /usr/local/share/seekscale/
+cp -f *.sh /usr/local/share/seekscale/
+chmod +x /usr/local/share/seekscale/seekscale-reconfigure.sh
+chmod +x /usr/local/share/seekscale/seekscale-check.sh
 
 # Create virtualenv
 virtualenv /usr/local/share/seekscale/venv
 source /usr/local/share/seekscale/venv/bin/activate
-pip install tornado twisted pyyaml redis psutil requests futures poster jinja2 ujson pyOpenSSL ndg-httpsclient pyasn1
-pip install ../../seekscale_commons/
+pip install -q tornado twisted pyyaml redis psutil requests futures poster jinja2 ujson pyOpenSSL ndg-httpsclient pyasn1
+pip install -q ../../seekscale_commons/
 
 # Configure dependencies
 cp -f seekscale-gateway.nginx.conf /etc/nginx/conf.d
@@ -33,6 +43,17 @@ cp -f stunnel.conf /etc/seekscale
 # Setup /etc/hosts
 echo "127.0.0.1 gateway.seekscale.com" >> /etc/hosts
 
+
+if [ ! -f /etc/seekscale/gateway.yaml ]; then
+    cp -f gateway.yaml /etc/seekscale/gateway.yaml
+fi
+
+
+# Setup seekscale-reconfigure
+rm -f /usr/local/bin/seekscale-reconfigure
+ln -sT /usr/local/share/seekscale/seekscale-reconfigure.sh /usr/local/bin/seekscale-reconfigure
+rm -f /usr/local/bin/seekscale-check
+ln -sT /usr/local/share/seekscale/seekscale-check.sh /usr/local/bin/seekscale-check
 
 
 # Remaining tasks:

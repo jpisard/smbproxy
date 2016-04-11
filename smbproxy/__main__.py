@@ -29,6 +29,8 @@ def main():
     parser.add_argument('--remote-samba-host', dest='remote_samba_host', default=None)
     parser.add_argument('--remote-samba-port', dest='remote_samba_port', default=None)
 
+    parser.add_argument('--force-host', dest='force_host', default=None)
+
     parsed_args = parser.parse_args()
 
     if parsed_args.shares_root is not None:
@@ -37,6 +39,8 @@ def main():
         settings.REMOTE_SAMBA_HOST = parsed_args.remote_samba_host
     if parsed_args.remote_samba_port is not None:
         settings.REMOTE_SAMBA_PORT = int(parsed_args.remote_samba_port)
+    if parsed_args.force_host is not None:
+        settings.FORCE_HOST = parsed_args.force_host
 
     init(
         parsed_args.listen_address,
