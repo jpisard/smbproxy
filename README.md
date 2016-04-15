@@ -35,7 +35,9 @@ To get started, you will need:
 
   * In datacenter 2, a machine or virtual machine running Ubuntu 14.04. Since this machine will keep all cached files, more disk space is always good. 500G or 1TB are good values. Depending on the amount of load you will put on the system, it could require up to 8G of RAM and 4 cores. In the rest of the documentation, we will call this machine the **entrypoint**
 
-  * Both machines should have an ip that is directly reachable by the other.
+  * Both machines should have an ip that is directly reachable by the other. If you want to setup port forwarding, you will need:
+    * Port tcp/61100 accessible on the gateway
+    * Ports tcp/6390 and tcp/34968 on the entrypoint
 
 
 ### Installing packages
