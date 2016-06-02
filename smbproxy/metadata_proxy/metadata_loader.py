@@ -24,8 +24,8 @@ redis_conn = None
 def get_redis_conn():
     global redis_conn
     if redis_conn is None:
-        #redis_conn = redis.StrictRedis(port=6380)
-        redis_conn = redis.StrictRedis(port=6379)
+        redis_conn = redis.StrictRedis(port=6380)
+        #redis_conn = redis.StrictRedis(port=6379)
 
     return redis_conn
 

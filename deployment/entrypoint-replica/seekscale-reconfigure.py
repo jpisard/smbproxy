@@ -114,7 +114,7 @@ def create_samba_config(host, shares):
         fh.write(samba_conf)
 
 
-def create_supervisor_config(host):
+def create_supervisor_config(host, metadata_proxy_host='127.0.0.1'):
     supervisord_conf_tpl = """[unix_http_server]
 file=/tmp/seekscale-entrypoint.supervisor.sock     ; path to your socket file
 
@@ -136,33 +136,16 @@ supervisor.rpcinterface_factory = supervisor.rpcinterface:make_main_rpcinterface
 [supervisorctl]
 serverurl=unix:///tmp/seekscale-entrypoint.supervisor.sock ; use a unix:// URL  for a unix socket
 
-[program:raw_nginx_cache_backend]
-command=/usr/local/share/seekscale/raw_nginx_cache/venv/bin/python /usr/local/share/seekscale/raw_nginx_cache/app.py
-stdout_logfile = /var/log/seekscale-entrypoint/raw_nginx_cache_backend.log
-redirect_stderr = true
-autorestart = true
 
 [program:smbproxy]
-command=/usr/local/share/seekscale/smbproxy/venv/bin/python /usr/local/share/seekscale/smbproxy/__main__.py --shares-root /home/data/smbshares/__HOST__ --force-host __HOST__ --metadata-proxy-address 127.0.0.1 --fileserver-address gateway.seekscale.com --fileserver-port 61100
+command=/usr/local/share/seekscale/smbproxy/venv/bin/python /usr/local/share/seekscale/smbproxy/__main__.py --shares-root /home/data/smbshares/__HOST__ --force-host __HOST__ --metadata-proxy-address __METADATA_PROXY_HOST__ --fileserver-address gateway.seekscale.com --fileserver-port 61100
 stdout_logfile = /var/log/seekscale-entrypoint/smbproxy.log
-redirect_stderr = true
-autorestart = true
-
-[program:metadata_proxy]
-command=/usr/local/share/seekscale/smbproxy/venv/bin/python /usr/local/share/seekscale/smbproxy/metadata_proxy.py
-stdout_logfile = /var/log/seekscale-entrypoint/metadata_proxy.log
 redirect_stderr = true
 autorestart = true
 
 [program:samba4]
 command=/usr/local/samba/sbin/smbd -F -s /usr/local/samba/etc/smb-__HOST__.conf
 stdout_logfile = /var/log/seekscale-entrypoint/samba4.log
-redirect_stderr = true
-autorestart = true
-
-[program:stunnel]
-command=stunnel4 /etc/seekscale/stunnel.conf
-stdout_logfile = /var/log/seekscale-entrypoint/stunnel.log
 redirect_stderr = true
 autorestart = true
 
@@ -174,12 +157,13 @@ autorestart = true
 """
 
     conf = supervisord_conf_tpl.replace('__HOST__', host)
+    conf = conf.replace('__METADATA_PROXY_HOST__', metadata_proxy_host)
 
     with open('/etc/seekscale/supervisord.conf', 'w') as fh:
         fh.write(conf)
 
 
-def update_hosts_file(remote_gateway_ip):
+def update_hosts_file(remote_gateway_ip, metadata_proxy_ip):
     try:
         with open('/etc/hosts', 'r') as hosts_fh:
             hosts_contents = hosts_fh.read()
@@ -188,7 +172,7 @@ def update_hosts_file(remote_gateway_ip):
 
     hosts_lines = hosts_contents.splitlines()
 
-    # Filter hosts_lines to remove lines that refer to gateway.seekscale.com
+    # Filter hosts_lines to remove lines that refer to gateway.seekscale.com or entrypoint.seekscale.com
     new_hosts_lines = []
 
     for host_line in hosts_lines:
@@ -201,13 +185,14 @@ def update_hosts_file(remote_gateway_ip):
 
         split2 = real_host_line.split(None)
 
-        if len(split2) == 2 and split2[1] == 'gateway.seekscale.com':
+        if len(split2) == 2 and (split2[1] == 'gateway.seekscale.com' or split2[1] == 'entrypoint.seekscale.com'):
             continue
         else:
             new_hosts_lines.append(host_line)
 
-    # Add the new mapping for gateway.seekscale.com
+    # Add the new mappings for gateway.seekscale.com and entrypoint.seekscale.com
     new_hosts_lines.append("%s  gateway.seekscale.com\n" % (remote_gateway_ip,))
+    new_hosts_lines.append("%s entrypoint.seekscale.com\n" % (metadata_proxy_ip,))
 
     new_hosts_contents = '\n'.join(new_hosts_lines)
 
@@ -239,10 +224,11 @@ def main():
         config = yaml.load(fh.read())
 
     check_config(config)
+    metadata_proxy_host = config.get('metadata_proxy_host', '127.0.0.1')
 
-    update_hosts_file(config['remote_host'])
+    update_hosts_file(config['remote_host'], metadata_proxy_host)
 
-    create_supervisor_config(config['shares_host'])
+    create_supervisor_config(config['shares_host'], metadata_proxy_host=metadata_proxy_host)
     create_samba_host(config['shares_host'], config['shares_names'])
 
     restart_redis()

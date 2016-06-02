@@ -34,31 +34,17 @@ pip install -q ../../seekscale_commons/
 deactivate
 cp -r ../../smbproxy/* /usr/local/share/seekscale/smbproxy
 
-# Install raw_nginx_cache
-mkdir -p /usr/local/share/seekscale/raw_nginx_cache
-virtualenv /usr/local/share/seekscale/raw_nginx_cache/venv
-source /usr/local/share/seekscale/raw_nginx_cache/venv/bin/activate
-pip install -q tornado flask
-pip install -q ../../seekscale_commons/
-deactivate
-cp -f raw_nginx_cache/app.py /usr/local/share/seekscale/raw_nginx_cache/
-
 
 # Configure dependencies
-cp -f raw_nginx_cache/nginx.raw_nginx_cache.conf /etc/nginx/conf.d
 cp -f ../common/ssl-conf /etc/nginx
+cp -f supervisord.conf /etc/seekscale
 
 
 # Setup redis
-cp -f redis.conf /etc/redis/redis.conf
-service redis-server restart
-
 mkdir -p /var/lib/redis-metadata
 cp -f redis-metadata.conf /var/lib/redis-metadata/redis-metadata.conf
 chown -R redis:redis /var/lib/redis-metadata
 
-# Setup stunnel
-cp -f stunnel.conf /etc/seekscale
 
 # Setup samba
 useradd -m cluster_user || true
@@ -67,10 +53,6 @@ tar -C /usr/local -xf /tmp/samba4-installed.tar.xz || exit 1
 mkdir -p /home/data/smbshares
 chmod 777 /home/data/smbshares
 mkdir -p /usr/local/samba/alt
-
-
-# Setup /etc/hosts
-echo "127.0.0.1 entrypoint.seekscale.com" >> /etc/hosts
 
 
 if [ ! -f /etc/smbproxy4.conf ]; then

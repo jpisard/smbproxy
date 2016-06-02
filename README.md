@@ -101,6 +101,29 @@ Once the transfer is done, the file will open as usual, and if you access the fi
 If the file is modified in datacenter 2, the changes will be transmitted back to the real fileserver.
 
 
+
+Replication
+===========
+
+To decrease the load on the entrypoint, it is possible to setup replicas. Those replicas can serve files to the machines in datacenter 2, just like the main entrypoint. The secondary entrypoints connect to the gateway through the main entrypoint, so they don't need a dedicated IP address or ports, and the gateway doesn't need to be aware of them. The hardware requirements for them, especially in terms of disk space, are similar to those of the main entrypoint.
+
+
+### Installation
+
+The process to setup a replica is similar to the process for the main entrypoint and the gateway. Get the code, then run:
+
+```
+cd deployment/entrypoint-replica
+bash setup.sh
+```
+
+Edit */etc/smbproxy4.conf*. This file is mostly similar to the configuration file of the main entrypoint, with the exception that for some settings, you need to input the ip address of the main entrypoint. Once this is done, run:
+
+```
+seekscale-reconfigure
+```
+
+
 Documentation
 =============
 
