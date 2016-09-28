@@ -79,7 +79,10 @@ def update_hosts_file(remote_entrypoint_ip):
 
 
 def disable_local_redis():
-    subprocess.check_call(['/usr/bin/env', 'service', 'redis-server', 'stop'])
+    try:
+        subprocess.check_call(['/usr/bin/env', 'service', 'redis-server', 'stop'])
+    except subprocess.CalledProcessError:
+        pass
 
 
 def restart_nginx():
