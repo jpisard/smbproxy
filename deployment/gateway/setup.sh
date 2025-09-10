@@ -11,7 +11,12 @@ fi
 
 # Install dependencies
 apt-get update -y -qq
-apt-get install -y -qq stunnel4 libffi-dev libssl-dev cifs-utils nginx supervisor libpq-dev python-dev python-virtualenv
+apt-get install -y -qq wget build-essential  stunnel4 libffi-dev libssl-dev cifs-utils nginx supervisor libpq-dev python2.7-dev
+if [  ! -f get-pip.py ]; then
+	wget https://bootstrap.pypa.io/pip/2.7/get-pip.py
+fi
+python2.7 get-pip.py
+python2.7 -m pip install virtualenv
 
 # Create directory hierarchy
 mkdir -p /etc/seekscale
@@ -29,7 +34,7 @@ chmod +x /usr/local/share/seekscale/seekscale-check.sh
 # Create virtualenv
 virtualenv /usr/local/share/seekscale/venv
 source /usr/local/share/seekscale/venv/bin/activate
-pip install -q tornado twisted pyyaml redis psutil requests futures poster jinja2 ujson pyOpenSSL ndg-httpsclient pyasn1
+pip install -q  statsd==3.3 Twisted==14.0.2 tornado==4.1 pyyaml redis psutil requests futures poster jinja2 ujson pyOpenSSL ndg-httpsclient pyasn1
 pip install -q ../../seekscale_commons/
 
 # Configure dependencies
