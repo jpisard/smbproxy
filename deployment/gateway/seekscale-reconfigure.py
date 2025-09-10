@@ -114,7 +114,7 @@ def main():
 
     update_hosts_file(config['remote_host'])
 
-    disable_local_redis()
+    #disable_local_redis()
     restart_nginx()
     restart_supervisor()
 
